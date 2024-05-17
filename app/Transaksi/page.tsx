@@ -4,7 +4,7 @@ const page = () => {
   return (
     <>
       <section className='max-container'>
-        <h1 className='text-5xl font-bold text-[#292929]'>Home</h1>
+        <h1 className='text-5xl font-bold text-[#292929]'>Transaksi</h1>
       </section>
     </>
   )
