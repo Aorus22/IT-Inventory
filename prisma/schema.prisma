@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  jenis     String
+  deskripsi String
+  stok      Int
+  gambar    String
+}
+
+model Project {
+  id                Int      @id @default(autoincrement())
+  nama              String
+  deskripsi         String
+  status            String
+  tanggal_mulai     DateTime
+  tanggal_selesai   DateTime
+}
+
+model Transaksi {
+  id        Int    @id @default(autoincrement())
+  nama      String
+  kuantitas Int
+  tanggal   DateTime
+  status    String
+}
+
+model PurchaseOrder {
+  id        Int    @id @default(autoincrement())
+  nama      String
+  deskripsi String
+  tanggal   DateTime
+  status    String
+}
