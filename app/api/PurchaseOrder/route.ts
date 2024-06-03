@@ -47,3 +47,23 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ error: 'Failed to delete Purchase Order' }, { status: 500 });
     }
 }
+
+export async function PUT(request: Request) {
+    try {
+        const body = await request.json();
+
+        const createdPO = await prisma.purchaseOrder.create({
+            data: {
+                nama: body.nama,
+                deskripsi: body.deskripsi,
+                tanggal: body.tanggal,
+                status: body.tanggal
+            },
+        });
+
+        return NextResponse.json(createdPO, { status: 201 });
+    } catch (error) {
+        console.error('Failed to create Purchase Order:', error);
+        return NextResponse.json({ error: 'Failed to create Purchase Order' }, { status: 500 });
+    }
+}

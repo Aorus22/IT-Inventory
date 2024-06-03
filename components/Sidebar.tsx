@@ -25,7 +25,7 @@ const Sidebar = () => {
             svg: <img src="/icon/home.svg" alt="Home" />,
         },
         {
-            href: '/DaftarInventaris',
+            href: '/Inventory',
             label: 'Daftar Inventaris',
             svg: <img src="/icon/inventory.svg" alt="Inventory" />
         },

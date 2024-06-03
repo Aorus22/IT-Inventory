@@ -43,7 +43,28 @@ export async function DELETE(request: Request) {
 
         return NextResponse.json({ message: 'Project deleted successfully' });
     } catch (error) {
-        console.error('Failed to delete project:', error);
-        return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
+        console.error('Failed to delete Project:', error);
+        return NextResponse.json({ error: 'Failed to delete Project' }, { status: 500 });
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        const body = await request.json();
+
+        const createdItem = await prisma.project.create({
+            data: {
+                nama: body.nama,
+                deskripsi: body.deskripsi,
+                status: body.status,
+                tanggal_mulai: body.tanggal_mulai,
+                tanggal_selesai: body.tanggal_selesai
+            },
+        });
+
+        return NextResponse.json(createdItem, { status: 201 });
+    } catch (error) {
+        console.error('Failed to create Project:', error);
+        return NextResponse.json({ error: 'Failed to create Project' }, { status: 500 });
     }
 }

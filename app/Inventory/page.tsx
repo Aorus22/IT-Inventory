@@ -1,12 +1,11 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import Table from "@/components/Tabel";
-import {useRouter} from "next/navigation";
+import Tabel from "@/components/Tabel";
 import axios from "axios";
 
 export interface Item {
     id: string,
-    name: string,
+    nama: string,
     jenis: string,
     deskripsi: string,
     stok: number,
@@ -14,7 +13,6 @@ export interface Item {
 }
 
 const Page = () => {
-    const router = useRouter()
     const [inventoryData, setInventoryData] = useState<Item[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -24,26 +22,12 @@ const Page = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('/api/inventory');
+            const response = await axios.get('/api/Inventory');
             setInventoryData(response.data);
             setLoading(false);
         } catch (error) {
             console.error('Failed to fetch data:', error);
         }
-    };
-
-    const handleDelete = async (id: string) => {
-        try {
-            const response = await axios.delete(`/api/inventory?id=${id}`);
-            fetchData().then();
-            alert('Data deleted successfully');
-        } catch (error) {
-            console.error('Failed to delete data:', error);
-        }
-    };
-
-    const handleDetail = (id: string) => {
-        router.push(`/DaftarInventaris/${id}`)
     };
 
     if (loading) {
@@ -54,7 +38,7 @@ const Page = () => {
         <>
             <section className='max-container p-4'>
                 <h1 className='text-5xl font-bold text-[#292929]'>Daftar Inventaris</h1>
-                <Table data={inventoryData} onDelete={handleDelete} onDetail={handleDetail} />
+                <Tabel data={inventoryData} apiUrl={"Inventory"} fetchData={fetchData}/>
             </section>
         </>
     );

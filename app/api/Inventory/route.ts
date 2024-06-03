@@ -47,3 +47,24 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ error: 'Failed to delete item' }, { status: 500 });
     }
 }
+
+export async function PUT(request: Request) {
+    try {
+        const body = await request.json();
+
+        const createdItem = await prisma.item.create({
+            data: {
+                nama: body.nama,
+                jenis: body.jenis,
+                deskripsi: body.deskripsi,
+                stok: body.stok,
+                gambar: body.gambar
+            },
+        });
+
+        return NextResponse.json(createdItem, { status: 201 });
+    } catch (error) {
+        console.error('Failed to create Item:', error);
+        return NextResponse.json({ error: 'Failed to create Item' }, { status: 500 });
+    }
+}
