@@ -2,8 +2,8 @@ import React from 'react';
 
 interface TableProps {
     data: Array<{ [key: string]: any }>;
-    onDelete: (index: number) => void;
-    onDetail: (index: number) => void;
+    onDelete: (id: string) => void;
+    onDetail: (id: string) => void;
 }
 
 const formatHeader = (key: string) => {
@@ -42,9 +42,9 @@ const Table: React.FC<TableProps> = ({ data, onDelete, onDetail }) => {
                     ))}
                     <td className="flex justify-center border px-4 py-2 border-gray-300">
                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={() => onDetail(index)}>Detail</button>
+                                onClick={() => onDetail(data[index].id)}>Detail</button>
                         <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
-                                onClick={() => onDelete(index)}>Delete</button>
+                                onClick={() => onDelete(data[index].id)}>Delete</button>
                     </td>
                 </tr>
             ))}

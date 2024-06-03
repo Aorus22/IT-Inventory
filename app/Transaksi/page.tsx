@@ -1,8 +1,10 @@
 "use client"
 import React, {useEffect, useState} from 'react';
 import Tabel from "@/components/Tabel";
+import {useRouter} from "next/navigation";
+import axios from "axios";
 
-interface Transaksi {
+export interface Transaksi {
     id: string,
     name: string,
     status: string,
@@ -11,34 +13,36 @@ interface Transaksi {
 }
 
 const TransactionPage = () => {
+    const router = useRouter()
     const [daftarTransaksi, setDaftarTransaksi] = useState<Transaksi[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/api/transaksi');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                const data = await response.json();
-                setDaftarTransaksi(data);
-            } catch (error) {
-                console.error(error)
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+        fetchData().then();
     }, []);
 
-    const handleDelete = (index: number) => {
-        alert(`Item with index ${index} is deleted.`);
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('/api/transaksi');
+            setDaftarTransaksi(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+        }
     };
 
-    const handleDetail = (index: number) => {
-        alert(`Detail of item with index ${index} is displayed.`);
+    const handleDelete = async (id: string) => {
+        try {
+            const response = await axios.delete(`/api/transaksi?id=${id}`);
+            fetchData().then();
+            alert('Data deleted successfully');
+        } catch (error) {
+            console.error('Failed to delete data:', error);
+        }
+    };
+
+    const handleDetail = (id: string) => {
+        router.push(`/Transaksi/${id}`)
     };
 
     if (loading) {
