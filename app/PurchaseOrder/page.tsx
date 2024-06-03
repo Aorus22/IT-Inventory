@@ -2,17 +2,19 @@
 import React, {useEffect, useState} from 'react';
 import Tabel from "@/components/Tabel";
 import axios from "axios";
+import {PurchaseOrder} from "@prisma/client";
+import LoadingBar from "@/components/LoadingBar";
 
-export interface PO {
-    id: string,
-    nama: string,
-    deskripsi: string,
-    tanggal: Date,
-    status: string
-}
+// export interface PO {
+//     id: string,
+//     nama: string,
+//     deskripsi: string,
+//     tanggal: Date,
+//     status: string
+// }
 
 const PurchaseOrderPage = () => {
-    const [daftarPO, setDaftarPO] = useState<PO[]>([]);
+    const [daftarPO, setDaftarPO] = useState<PurchaseOrder[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -30,7 +32,7 @@ const PurchaseOrderPage = () => {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingBar />
     }
 
     return (

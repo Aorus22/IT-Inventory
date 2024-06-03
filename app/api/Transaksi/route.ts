@@ -1,6 +1,5 @@
 import {PrismaClient} from '@prisma/client';
 import { NextResponse } from 'next/server';
-import {Transaksi} from "@/app/Transaksi/page";
 
 const prisma = new PrismaClient();
 

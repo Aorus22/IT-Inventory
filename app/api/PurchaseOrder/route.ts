@@ -57,13 +57,13 @@ export async function PUT(request: Request) {
                 nama: body.nama,
                 deskripsi: body.deskripsi,
                 tanggal: body.tanggal,
-                status: body.tanggal
+                status: body.status
             },
         });
 
         return NextResponse.json(createdPO, { status: 201 });
     } catch (error) {
         console.error('Failed to create Purchase Order:', error);
-        return NextResponse.json({ error: 'Failed to create Purchase Order' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to create Purchase Order'}, { status: 500 });
     }
 }

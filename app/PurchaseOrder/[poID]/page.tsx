@@ -2,13 +2,14 @@
 import React, {useEffect, useState} from 'react';
 import DynamicForm from "@/components/Form";
 import {useParams} from "next/navigation";
-import {PO} from "@/app/PurchaseOrder/page";
 import axios from "axios";
+import {PurchaseOrder} from "@prisma/client";
+import LoadingBar from "@/components/LoadingBar";
 
 const Page = () => {
     const param = useParams()
-    const [data, setData] = useState<PO>({
-        deskripsi: "", id: "", nama: "", status: "", tanggal: new Date()
+    const [data, setData] = useState<PurchaseOrder>({
+        id: 0, nama: "", deskripsi: "", status: "", tanggal: new Date()
     });
     const [loading, setLoading] = useState(true);
 
@@ -33,7 +34,7 @@ const Page = () => {
     }, [param.poID]);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingBar />
     }
 
     if (param.poID === "Tambah"){

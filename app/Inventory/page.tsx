@@ -2,15 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import Tabel from "@/components/Tabel";
 import axios from "axios";
+import {Item} from "@prisma/client";
+import LoadingBar from "@/components/LoadingBar";
 
-export interface Item {
-    id: string,
-    nama: string,
-    jenis: string,
-    deskripsi: string,
-    stok: number,
-    gambar: string
-}
+// export interface Item {
+//     id: string,
+//     nama: string,
+//     jenis: string,
+//     deskripsi: string,
+//     stok: number,
+//     gambar: string
+// }
 
 const Page = () => {
     const [inventoryData, setInventoryData] = useState<Item[]>([]);
@@ -31,7 +33,7 @@ const Page = () => {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingBar />
     }
 
     return (

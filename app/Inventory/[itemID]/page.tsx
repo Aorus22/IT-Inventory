@@ -1,14 +1,15 @@
 'use client';
 import React, {useEffect, useState} from 'react';
 import DynamicForm from "@/components/Form";
-import {Item} from "@/app/Inventory/page";
 import {useParams} from "next/navigation";
 import axios from "axios";
+import {Item} from "@prisma/client";
+import LoadingBar from "@/components/LoadingBar";
 
 const Page = () => {
     const param = useParams()
     const [data, setData] = useState<Item>({
-        deskripsi: "", gambar: "", id: "", jenis: "", nama: "", stok: 0
+        id: 0,  nama: "", jenis: "", deskripsi: "", gambar: "", stok: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -33,7 +34,7 @@ const Page = () => {
     }, [param.itemID]);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingBar />
     }
 
     if (param.itemID === "Tambah"){

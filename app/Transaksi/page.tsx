@@ -2,14 +2,16 @@
 import React, {useEffect, useState} from 'react';
 import Tabel from "@/components/Tabel";
 import axios from "axios";
+import {Transaksi} from "@prisma/client";
+import LoadingBar from "@/components/LoadingBar";
 
-export interface Transaksi {
-    id: string,
-    nama: string,
-    status: string,
-    tanggal: Date,
-    kuantitas: number
-}
+// export interface Transaksi {
+//     id: string,
+//     nama: string,
+//     status: string,
+//     tanggal: Date,
+//     kuantitas: number
+// }
 
 const TransactionPage = () => {
     const [daftarTransaksi, setDaftarTransaksi] = useState<Transaksi[]>([]);
@@ -30,7 +32,7 @@ const TransactionPage = () => {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingBar />
     }
 
     return (

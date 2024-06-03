@@ -2,13 +2,14 @@
 import React, {useEffect, useState} from 'react';
 import DynamicForm from "@/components/Form";
 import {useParams} from "next/navigation";
-import {Project} from "@/app/Project/page";
 import axios from "axios";
+import {Project} from "@prisma/client";
+import LoadingBar from "@/components/LoadingBar";
 
 const Page = () => {
     const param = useParams()
     const [data, setData] = useState<Project>({
-       id: "", nama: "",  deskripsi: "", status: "", tanggal_mulai: new Date(), tanggal_selesai: new Date()
+       id: 0, nama: "",  deskripsi: "", status: "", tanggal_mulai: new Date(), tanggal_selesai: new Date()
     });
     const [loading, setLoading] = useState(true);
 
@@ -33,7 +34,7 @@ const Page = () => {
     }, [param.projectID]);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingBar />
     }
 
     if (param.projectID === "Tambah"){

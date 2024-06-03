@@ -1,15 +1,15 @@
 'use client';
 import React, {useEffect, useState} from 'react';
 import DynamicForm from "@/components/Form";
-import {Item} from "@/app/Inventory/page";
 import {useParams} from "next/navigation";
 import axios from "axios";
-import {Transaksi} from "@/app/Transaksi/page";
+import {Transaksi} from "@prisma/client";
+import LoadingBar from "@/components/LoadingBar";
 
 const Page = () => {
     const param = useParams()
     const [data, setData] = useState<Transaksi>({
-        id: "", kuantitas: 0, nama: "", status: "", tanggal: new Date()
+        id: 0, nama: "", kuantitas: 0, status: "", tanggal: new Date()
     });
     const [loading, setLoading] = useState(true);
 
@@ -17,7 +17,7 @@ const Page = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`/api/Transaksi?id=${param.transaksiID}`);
-                setData(response.data as Transaksi);
+                setData(response.data);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             } finally {
@@ -33,7 +33,7 @@ const Page = () => {
     }, [param.transaksiID]);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingBar />
     }
 
     if (param.transaksiID === "Tambah"){
