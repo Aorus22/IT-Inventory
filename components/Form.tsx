@@ -57,7 +57,14 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, url
     };
 
     const handleUpdate = async () => {
-
+        try {
+            const response = await axios.patch(`/api/${urlApi}?id=${data.id}`, data);
+            router.push(`/${urlApi}`);
+            alert("Update data successfull")
+        } catch (error){
+            console.error(error)
+        }
+        setIsEditMode(!isEditMode);
     };
 
     const getInputType = (key: string): string => {

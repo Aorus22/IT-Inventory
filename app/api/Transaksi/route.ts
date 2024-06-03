@@ -67,3 +67,31 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Failed to create Transaksi' }, { status: 500 });
     }
 }
+
+export async function PATCH(request: Request) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+
+    if (!id) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+    }
+
+    try {
+        const body = await request.json();
+
+        const updatedTransaksi = await prisma.transaksi.update({
+            where: { id: parseInt(id) },
+            data: {
+                nama: body.nama,
+                kuantitas: body.kuantitas,
+                tanggal: body.tanggal,
+                status: body.status,
+            },
+        });
+
+        return NextResponse.json(updatedTransaksi);
+    } catch (error) {
+        console.error('Failed to update Transaksi:', error);
+        return NextResponse.json({ error: 'Failed to update Transaksi Order' }, { status: 500 });
+    }
+}

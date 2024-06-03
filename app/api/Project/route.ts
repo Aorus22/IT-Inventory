@@ -68,3 +68,32 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Failed to create Project' }, { status: 500 });
     }
 }
+
+export async function PATCH(request: Request) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+
+    if (!id) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+    }
+
+    try {
+        const body = await request.json();
+
+        const updatedProject = await prisma.project.update({
+            where: { id: parseInt(id) },
+            data: {
+                nama: body.nama,
+                deskripsi: body.deskripsi,
+                status: body.status,
+                tanggal_mulai: body.tanggal_mulai,
+                tanggal_selesai: body.tanggal_selesai
+            },
+        });
+
+        return NextResponse.json(updatedProject);
+    } catch (error) {
+        console.error('Failed to update Project:', error);
+        return NextResponse.json({ error: 'Failed to update Project' }, { status: 500 });
+    }
+}

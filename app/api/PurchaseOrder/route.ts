@@ -67,3 +67,31 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Failed to create Purchase Order'}, { status: 500 });
     }
 }
+
+export async function PATCH(request: Request) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+
+    if (!id) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+    }
+
+    try {
+        const body = await request.json();
+
+        const updatedPO = await prisma.purchaseOrder.update({
+            where: { id: parseInt(id) },
+            data: {
+                nama: body.nama,
+                deskripsi: body.deskripsi,
+                tanggal: body.tanggal,
+                status: body.status
+            },
+        });
+
+        return NextResponse.json(updatedPO);
+    } catch (error) {
+        console.error('Failed to update Purchase Order:', error);
+        return NextResponse.json({ error: 'Failed to update Purchase Order' }, { status: 500 });
+    }
+}

@@ -68,3 +68,32 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Failed to create Item' }, { status: 500 });
     }
 }
+
+export async function PATCH(request: Request) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+
+    if (!id) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+    }
+
+    try {
+        const body = await request.json();
+
+        const updatedItem = await prisma.item.update({
+            where: { id: parseInt(id) },
+            data: {
+                nama: body.nama,
+                jenis: body.jenis,
+                deskripsi: body.deskripsi,
+                stok: body.stok,
+                gambar: body.gambar
+            },
+        });
+
+        return NextResponse.json(updatedItem);
+    } catch (error) {
+        console.error('Failed to update Item:', error);
+        return NextResponse.json({ error: 'Failed to update Item' }, { status: 500 });
+    }
+}
