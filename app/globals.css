@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -12,7 +14,7 @@
 
 body {
   background-color: #EEEDEB;
-  font-family: Poppins, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 @layer utilities {
