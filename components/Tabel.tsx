@@ -32,6 +32,8 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
     const [showModal, setShowModal] = useState(false);
     const [modalItemId, setModalItemId] = useState('');
 
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' | '' }>({ key: '', direction: '' });
+
     const handleDelete = async (id: string) => {
         setModalItemId(id);
         setShowModal(true);
@@ -62,7 +64,34 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
         setCurrentPage(1);
     };
 
-    const filteredData = data.filter(item =>
+    const handleSort = (key: string) => {
+        let direction: 'ascending' | 'descending' | '' = 'ascending'; // Default to ascending
+
+        if (sortConfig.key === key) {
+            if (sortConfig.direction === 'ascending') {
+                direction = 'descending';
+            } else if (sortConfig.direction === 'descending') {
+                direction = '';
+            }
+        }
+
+        setSortConfig({ key, direction });
+    };
+
+    const sortedData = [...data].sort((a, b) => {
+        if (sortConfig.key && sortConfig.direction) {
+            if (a[sortConfig.key] < b[sortConfig.key]) {
+                return sortConfig.direction === 'ascending' ? -1 : 1;
+            }
+            if (a[sortConfig.key] > b[sortConfig.key]) {
+                return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        }
+        return 0;
+    });
+
+    const filteredData = sortedData.filter(item =>
         Object.values(item).some(value =>
             value.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
@@ -160,7 +189,18 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
                         <tr className="h-12 bg-white border-b-2 border-black">
                             <th className="px-4 py-2">No</th>
                             {Object.keys(currentItems[0]).map((key, index) => (
-                                <th key={index} className="px-4 py-2">{formatHeader(key)}</th>
+                                <th
+                                    key={index}
+                                    className="px-4 py-2 cursor-pointer"
+                                    onClick={() => handleSort(key)}
+                                >
+                                    {formatHeader(key)}
+                                    {sortConfig.key === key && sortConfig.direction !== '' && (
+                                        <span>
+                                            {sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'}
+                                        </span>
+                                    )}
+                                </th>
                             ))}
                             <th className="px-4 py-2">Actions</th>
                         </tr>
