@@ -16,7 +16,9 @@ const Page = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/Project?id=${param.projectID}`);
+                const response = await axios.get<Project>(`/api/Project?id=${param.projectID}`);
+                response.data.tanggal_mulai = new Date(response.data.tanggal_mulai)
+                response.data.tanggal_selesai = new Date(response.data.tanggal_selesai)
                 setData(response.data);
             } catch (error) {
                 console.error('Failed to fetch data:', error);

@@ -17,8 +17,9 @@ const Page = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/PurchaseOrder?id=${param.poID}`);
-                setData(response.data);
+                const response = await axios.get<PurchaseOrder>(`/api/PurchaseOrder?id=${param.poID}`);
+                response.data.tanggal = new Date(response.data.tanggal)
+                setData(response.data)
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             } finally {

@@ -17,7 +17,8 @@ const Page = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/Transaksi?id=${param.transaksiID}`);
+                const response = await axios.get<Transaksi>(`/api/Transaksi?id=${param.transaksiID}`);
+                response.data.tanggal = new Date(response.data.tanggal)
                 setData(response.data);
             } catch (error) {
                 console.error('Failed to fetch data:', error);

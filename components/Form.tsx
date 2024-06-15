@@ -126,14 +126,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, url
                         {dropdowns && dropdowns[key] ? (
                             <select
                                 name={key}
-                                value={data[key] !== 0 ? (data[key]) : ""}
                                 onChange={handleChange}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 disabled={!isEditMode}
                             >
                                 <option value="" disabled selected hidden>Pilih...</option>
                                 {dropdowns[key].map((item) => (
-                                    <option key={item.id} value={item.id}>
+                                    <option selected={data[key] === item.id} key={item.id} value={item.id}>
                                         {item.id === item.value ? (item.id) : (`${item.id} - ${item.value}`)}
                                     </option>
                                 ))}
