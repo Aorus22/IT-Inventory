@@ -2,20 +2,21 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import {usePathname, useRouter} from "next/navigation";
+import Cookies from "js-cookie";
+import {fdatasyncSync} from "node:fs";
+import axios from "axios";
 
 type User = {
-    nama: string,
+    username: string,
     role: string,
-    profilePic: string
 }
 
 const Sidebar = () => {
     const [open, setOpen] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User>({
-        profilePic: "",
         role: "",
-        nama: ""
+        username: ""
     });
 
     const [activePage, setActivePage] = useState('/');
@@ -24,6 +25,12 @@ const Sidebar = () => {
 
     useEffect(() => {
         setActivePage(pathname);
+        const currentUserString = sessionStorage.getItem('sessionUser')
+        if (currentUserString){
+            const currentUser = JSON.parse(currentUserString) as User
+            setUser(currentUser)
+            setIsLoggedIn(true)
+        }
     }, [pathname]);
 
     const menuItems = [
@@ -56,17 +63,18 @@ const Sidebar = () => {
 
     const handleLogin = () => {
         router.push("/Login")
-        setIsLoggedIn(true);
-        setUser({ nama: 'John Doe', role: 'Admin', profilePic: '/placeholder_pp.jpg' });
+        router.refresh()
     };
 
-    const handleLogout = () => {
-        setIsLoggedIn(false);
+    const handleLogout = async  () => {
+        setIsLoggedIn(false)
+        const response = await axios.post('/api/Logout', "gatawu");
+        sessionStorage.removeItem('sessionUser')
         setUser({
-            profilePic: "",
             role: "",
-            nama: ""
+            username: ""
         });
+        router.refresh()
     };
 
     return (
@@ -87,7 +95,7 @@ const Sidebar = () => {
                 {menuItems.map((item, index) => (
                     <li
                         key={index}
-                        className={`font-bold text-gray-300 text-md flex items-center cursor-pointer pl-6 py-3 hover:bg-light-white rounded-r-xl mt-2 ${activePage === item.href && 'bg-white text-[#2c3f79]'}`}
+                        className={`font-bold text-gray-300 text-md flex items-center cursor-pointer pl-6 py-3 hover:bg-light-white rounded-r-xl mt-2 ${activePage === item.href && 'bg-white text-blue-700'}`}
                     >
                         <Link href={item.href}>
                             <div className="flex items-center">
@@ -107,9 +115,9 @@ const Sidebar = () => {
             {isLoggedIn ? (
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gray-900">
                     <div className="flex items-center gap-x-4 text-white">
-                        <img src={user?.profilePic} alt="Profile" className="w-8 h-8 rounded-full"/>
+                        <img src={'/placeholder_pp.jpg'} alt="Profile" className="w-8 h-8 rounded-full"/>
                         <div>
-                            <p>{user.nama}</p>
+                            <p>{user.username}</p>
                             <p>{user.role}</p>
                         </div>
                         <button className="text-white" onClick={handleLogout}>Logout</button>

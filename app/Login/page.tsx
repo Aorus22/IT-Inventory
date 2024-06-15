@@ -1,9 +1,10 @@
 "use client"
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import {useRouter} from "next/navigation";
+import Cookies from 'universal-cookie';
 
-const Login: React.FC = () => {
+const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
@@ -13,7 +14,8 @@ const Login: React.FC = () => {
         try {
             const response = await axios.post('/api/Login', { username, password });
             const { user } = response.data;
-            sessionStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('sessionUser', JSON.stringify(user))
+
             router.push('/');
         } catch (error) {
             console.error('Login failed:', error);
