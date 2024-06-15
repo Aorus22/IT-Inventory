@@ -12,10 +12,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('/api/Login', { username, password });
-            const { user } = response.data;
-            sessionStorage.setItem('sessionUser', JSON.stringify(user))
-
+            await axios.post('/api/Login', { username, password });
             router.push('/');
         } catch (error) {
             console.error('Login failed:', error);

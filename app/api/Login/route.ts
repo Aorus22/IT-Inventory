@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -31,5 +31,21 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error('Login failed:', error);
         return NextResponse.json({ error: 'Login failed. Please try again later.' }, { status: 500 });
+    }
+}
+
+export async function GET(request: NextRequest) {
+    try {
+        const sessionUserCookie = request.cookies.get('sessionUser');
+
+        if (!sessionUserCookie) {
+            return NextResponse.json({ error: 'Session user cookie not found' }, { status: 404 });
+        }
+
+        const sessionUser = JSON.parse(sessionUserCookie.value);
+        return NextResponse.json({ sessionUser });
+    } catch (error) {
+        console.error('Failed to retrieve sessionUser cookie:', error);
+        return NextResponse.json({ error: 'Failed to retrieve sessionUser cookie' }, { status: 500 });
     }
 }

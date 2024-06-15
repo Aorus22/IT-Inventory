@@ -24,13 +24,19 @@ const Sidebar = () => {
     const router = useRouter()
 
     useEffect(() => {
-        setActivePage(pathname);
-        const currentUserString = sessionStorage.getItem('sessionUser')
-        if (currentUserString){
-            const currentUser = JSON.parse(currentUserString) as User
-            setUser(currentUser)
-            setIsLoggedIn(true)
+        const auth = async () => {
+            try {
+                const currentUser = await axios.get("/api/Login")
+                if (currentUser){
+                    setUser(currentUser.data.sessionUser)
+                    setIsLoggedIn(true)
+                }
+            } catch (err){
+                console.error(err)
+            }
         }
+        setActivePage(pathname);
+        auth().then()
     }, [pathname]);
 
     const menuItems = [
@@ -73,8 +79,7 @@ const Sidebar = () => {
 
     const handleLogout = async  () => {
         setIsLoggedIn(false)
-        const response = await axios.post('/api/Logout', "gatawu");
-        sessionStorage.removeItem('sessionUser')
+        await axios.post('/api/Logout');
         setUser({
             role: "",
             username: ""
