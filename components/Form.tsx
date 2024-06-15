@@ -93,7 +93,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, url
     };
 
     return (
-        <div>
+        <div className="bg-white rounded-xl p-12 mt-4">
             {!isNewForm && (
                 <div className="mb-4 flex space-x-2">
                     <button
@@ -115,52 +115,58 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, url
                 </div>
             )}
             <form>
-                {Object.keys(data).map((key) => (
-                    <div key={key} className="mb-4">
-                        <label
-                            className={`block text-gray-700 text-sm font-bold mb-2 ${isNewForm && (ignore?.includes(key) || key == "id") ? "hidden" : ""}`}
-                            htmlFor={key}
-                        >
-                            {formatHeader(key)}
-                        </label>
-                        {dropdowns && dropdowns[key] ? (
-                            <select
-                                name={key}
-                                onChange={handleChange}
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                disabled={!isEditMode}
+                {Object.keys(data).map((key) => {
+                    const isHidden = isNewForm && (ignore?.includes(key) || key === "id");
+                    const isDisabled = !isEditMode || ignore?.includes(key) || key === "id";
+
+                    return (
+                        <div key={key} className={`mb-4 ${isHidden ? 'hidden' : ''}`}>
+                            <label
+                                className="block text-gray-700 text-lg font-bold mb-2"
+                                htmlFor={key}
                             >
-                                <option value="" disabled selected hidden>Pilih...</option>
-                                {dropdowns[key].map((item) => (
-                                    <option selected={data[key] === item.id} key={item.id} value={item.id}>
-                                        {item.id === item.value ? (item.id) : (`${item.id} - ${item.value}`)}
-                                    </option>
-                                ))}
-                            </select>
-                        ) : (
-                            <input
-                                type={getInputType(key)}
-                                name={key}
-                                value={getInputType(key) === "datetime-local" ? (data[key].toISOString().slice(0, 16)) : (data[key])}
-                                onChange={handleChange}
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                hidden={isNewForm && (ignore?.includes(key) || key == "id")}
-                                disabled={!isEditMode || ignore?.includes(key) || key == "id"}
-                            />
-                        )}
-                    </div>
-                ))}
+                                {formatHeader(key)}
+                            </label>
+                            {dropdowns && dropdowns[key] ? (
+                                <select
+                                    name={key}
+                                    onChange={handleChange}
+                                    value={data[key] || ""}
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline text-lg ${isDisabled ? 'bg-blue-100 cursor-not-allowed' : ''}`}
+                                    disabled={isDisabled}
+                                >
+                                    <option value="" disabled hidden>Pilih...</option>
+                                    {dropdowns[key].map((item) => (
+                                        <option key={item.id} value={item.id}>
+                                            {item.id === item.value ? item.id : `${item.id} - ${item.value}`}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    type={getInputType(key)}
+                                    name={key}
+                                    value={getInputType(key) === "datetime-local" ? data[key].toISOString().slice(0, 16) : data[key]}
+                                    onChange={handleChange}
+                                    className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-lg ${isDisabled ? 'bg-blue-100 cursor-not-allowed' : ''}`}
+                                    disabled={isDisabled}
+                                />
+                            )}
+                        </div>
+                    );
+                })}
 
                 {isNewForm && (
                     <button
                         type="button"
                         onClick={handleSubmit}
-                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                        className="px-4 py-2 bg-blue-500 text-white rounded text-lg"
                     >
                         Submit
                     </button>
                 )}
             </form>
+
         </div>
     );
 };

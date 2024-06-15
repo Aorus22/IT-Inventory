@@ -90,7 +90,7 @@ const Sidebar = () => {
     return (
         <div className={` ${open ? "w-60" : "w-20 "} bg-[#2c3f79] h-screen pr-8 pt-8 relative duration-300`}>
             <div onClick={() => setOpen(!open)}
-                 className={`absolute -right-4 top-9 w-8 h-8 rounded-full bg-white border z-1 flexCenter cursor-pointer ${!open && 'rotate-180'} duration-300`}>
+                 className={`absolute -right-4 top-9 w-8 h-8 rounded-full bg-white border z-10 flexCenter cursor-pointer ${!open && 'rotate-180'} duration-300`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                      className='fill-[#292929] p-1'>
                     <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z"/>
@@ -105,7 +105,7 @@ const Sidebar = () => {
                 {menuItems.map((item, index) => (
                     <li
                         key={index}
-                        className={`font-bold text-gray-300 text-md flex items-center cursor-pointer pl-6 py-3 hover:bg-light-white rounded-r-xl mt-2 ${activePage === item.href && 'bg-white text-blue-700'}`}
+                        className={`font-bold text-gray-300 text-md flex items-center cursor-pointer pl-6 py-3 hover:bg-light-white rounded-r-xl mt-2 ${activePage === item.href && 'bg-white text-blue-900'}`}
                     >
                         <Link href={item.href}>
                             <div className="flex items-center">

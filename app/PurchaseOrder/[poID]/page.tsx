@@ -5,6 +5,7 @@ import {useParams} from "next/navigation";
 import axios from "axios";
 import {PurchaseOrder} from "@prisma/client";
 import LoadingBar from "@/components/LoadingBar";
+import PageTitle from "@/components/PageTitle";
 
 const Page = () => {
     const param = useParams()
@@ -64,7 +65,7 @@ const Page = () => {
     if (param.poID === "Tambah"){
         return (
             <div className="max-container p-4">
-                <h1 className="text-5xl font-bold text-[#292929] mb-4">Tambah Purchase Order</h1>
+                <PageTitle title={"Tambah Purchase Order"} />
                 <DynamicForm data={data} setData={setData} isNewForm={true} urlApi="PurchaseOrder" dropdowns={dropdowns} ignore={ignore}/>
             </div>
         )
@@ -72,7 +73,7 @@ const Page = () => {
 
     return (
         <div className="max-container p-4">
-            <h1 className="text-5xl font-bold text-[#292929] mb-4">Detail Purchase Order</h1>
+            <PageTitle title={"Detail Purchase Order"} />
             <DynamicForm data={data} setData={setData} isNewForm={false} urlApi="PurchaseOrder" dropdowns={dropdowns} ignore={ignore}/>
         </div>
     );

@@ -4,6 +4,7 @@ import Tabel from "@/components/Tabel";
 import axios from "axios";
 import {Item} from "@prisma/client";
 import LoadingBar from "@/components/LoadingBar";
+import PageTitle from "@/components/PageTitle";
 
 // export interface Item {
 //     id: string,
@@ -38,8 +39,8 @@ const Page = () => {
 
     return (
         <>
-            <section className='max-container p-4'>
-                <h1 className='text-5xl font-bold text-[#292929]'>Daftar Inventaris</h1>
+            <section className='max-container px-4'>
+                <PageTitle title={"Inventaris"} />
                 <Tabel data={inventoryData} apiUrl={"Inventory"} fetchData={fetchData}/>
             </section>
         </>

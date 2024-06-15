@@ -21,7 +21,7 @@ const Login = () => {
     };
 
     return (
-        <div className="fixed inset-0 flex justify-center items-center bg-gradient-to-b from-blue-100 to-blue-300">
+        <div className="fixed z-20 inset-0 flex justify-center items-center bg-gradient-to-b from-blue-100 to-blue-300">
             <div className="bg-[#2c3f79] px-20 pt-16 pb-20 rounded-3xl shadow-lg text-white w-[32rem]">
                 <h2 className="text-2xl mb-6 text-center">Sign In</h2>
                 <div className="mb-4">

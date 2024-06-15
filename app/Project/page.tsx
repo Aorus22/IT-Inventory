@@ -4,6 +4,7 @@ import Tabel from "@/components/Tabel";
 import axios from "axios";
 import {Project} from "@prisma/client";
 import LoadingBar from "@/components/LoadingBar";
+import PageTitle from "@/components/PageTitle";
 
 // export interface Project {
 //     id: string,
@@ -38,8 +39,8 @@ const ProjectPage = () => {
 
     return (
         <>
-            <section className='max-container p-4'>
-                <h1 className='text-5xl font-bold text-[#292929]'>Project</h1>
+            <section className='max-container px-4'>
+                <PageTitle title={"Project"} />
                 <Tabel data={daftarProject} apiUrl={"Project"} fetchData={fetchData}/>
             </section>
         </>

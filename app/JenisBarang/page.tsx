@@ -4,6 +4,7 @@ import Tabel from "@/components/Tabel";
 import axios from "axios";
 import {Item, JenisBarang} from "@prisma/client";
 import LoadingBar from "@/components/LoadingBar";
+import PageTitle from "@/components/PageTitle";
 
 const Page = () => {
     const [jenisData, setJenisData] = useState<JenisBarang[]>([]);
@@ -29,8 +30,8 @@ const Page = () => {
 
     return (
         <>
-            <section className='max-container p-4'>
-                <h1 className='text-5xl font-bold text-[#292929]'>Daftar Jenis Barang</h1>
+            <section className='max-container px-4'>
+                <PageTitle title={"Jenis Barang"} />
                 <Tabel data={jenisData} apiUrl={"JenisBarang"} fetchData={fetchData}/>
             </section>
         </>
