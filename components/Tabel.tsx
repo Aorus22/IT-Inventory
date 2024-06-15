@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface TableProps {
     data: Array<{ [key: string]: any }>;
@@ -29,14 +31,14 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
         localStorage.setItem('itemsPerPage', itemsPerPage.toString());
     }, [itemsPerPage]);
 
-    const [showModal, setShowModal] = useState(false);
+    const [showModalDelete, setShowModalDelete] = useState(false);
     const [modalItemId, setModalItemId] = useState('');
 
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' | '' }>({ key: '', direction: '' });
 
     const handleDelete = async (id: string) => {
         setModalItemId(id);
-        setShowModal(true);
+        setShowModalDelete(true);
     };
 
     const confirmDelete = async () => {
@@ -47,12 +49,12 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
         } catch (error) {
             console.error('Failed to delete data:', error);
         } finally {
-            setShowModal(false);
+            setShowModalDelete(false);
         }
     };
 
     const cancelDelete = () => {
-        setShowModal(false);
+        setShowModalDelete(false);
     };
 
     const handleDetail = (id: string) => {
@@ -111,6 +113,42 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
         setCurrentPage(1);
     };
 
+    const exportToPdf = () => {
+        const doc = new jsPDF('p', 'pt', 'a4');
+        const pdfTable = document.querySelector('#pdf-table');
+
+        if (!pdfTable) {
+            console.error('Element with ID "pdf-table" not found.');
+            return;
+        }
+
+        const actionColumns = pdfTable.querySelectorAll('th:last-child, td:last-child');
+        actionColumns.forEach(col => {
+            (col as HTMLElement).style.display = 'none';
+        });
+
+        html2canvas(pdfTable as HTMLElement, {
+            scale: 1
+        }).then(canvas => {
+
+            actionColumns.forEach(col => {
+                (col as HTMLElement).style.display = '';
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdfWidth = doc.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            doc.addImage(imgData, 'PNG', 40, 40, pdfWidth - 80, pdfHeight);
+            doc.save('table.pdf');
+        }).catch(error => {
+            console.error('Failed to generate PDF:', error);
+            actionColumns.forEach(col => {
+                (col as HTMLElement).style.display = '';
+            });
+        });
+    };
+
     const pagination = (
         <div className="flex justify-between items-center mt-4 mb-2">
             <div>
@@ -162,6 +200,12 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
                     </svg>
                     <span>Tambah</span>
                 </button>
+                <button
+                    className="bg-green-200 hover:bg-green-400 text-green-800 font-bold py-2 px-4 rounded"
+                    onClick={exportToPdf}
+                >
+                    Export to PDF
+                </button>
                 <div className="relative">
                     <input
                         type="text"
@@ -184,7 +228,7 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
                 <p className="text-center p-4">Tidak ada data yang tersedia.</p>
             ) : (
                 <>
-                    <table className="table-auto w-full border-collapse ">
+                    <table id="pdf-table" className="table-auto w-full border-collapse">
                         <thead>
                         <tr className="h-12 bg-white border-b-2 border-black">
                             <th className="px-4 py-2">No</th>
@@ -238,7 +282,7 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
                 </>
             )}
 
-            {showModal && (
+            {showModalDelete && (
                 <>
                     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-700 bg-opacity-50">
                         <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
