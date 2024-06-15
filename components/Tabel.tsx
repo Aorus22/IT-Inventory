@@ -10,7 +10,7 @@ interface TableProps {
     fetchData: () => void;
 }
 
-const formatHeader = (key: string) => {
+export const formatHeader = (key: string) => {
     return key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
@@ -67,7 +67,7 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
     };
 
     const handleSort = (key: string) => {
-        let direction: 'ascending' | 'descending' | '' = 'ascending'; // Default to ascending
+        let direction: 'ascending' | 'descending' | '' = 'ascending';
 
         if (sortConfig.key === key) {
             if (sortConfig.direction === 'ascending') {

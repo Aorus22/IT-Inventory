@@ -20,7 +20,19 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Transaksi not found' }, { status: 404 });
         }
     } else {
-        data = await prisma.transaksi.findMany();
+        data = await prisma.transaksi.findMany({
+            include: {
+                Item: true
+            }
+        });
+
+        data = data.map(({ id_item, id, jenis_transaksi, nama_customer,  Item, ...rest }) => ({
+            id: id,
+            jenis_transaksi: jenis_transaksi,
+            nama_customer: nama_customer,
+            nama_item: Item?.nama_item,
+            ...rest,
+        }));
     }
 
     return NextResponse.json(data);
@@ -54,10 +66,12 @@ export async function PUT(request: Request) {
 
         const createdTransaksi = await prisma.transaksi.create({
             data: {
-                nama: body.nama,
+                nama_customer: body.nama_customer,
+                jenis_transaksi: body.jenis_transaksi,
+                id_item: parseInt(body.id_item),
                 kuantitas: body.kuantitas,
                 tanggal: body.tanggal,
-                status: body.status,
+                status: "pending",
             },
         });
 
@@ -82,10 +96,11 @@ export async function PATCH(request: Request) {
         const updatedTransaksi = await prisma.transaksi.update({
             where: { id: parseInt(id) },
             data: {
-                nama: body.nama,
+                nama_customer: body.nama_customer,
+                jenis_transaksi: body.jenis_transaksi,
+                id_item: parseInt(body.id_item),
                 kuantitas: body.kuantitas,
                 tanggal: body.tanggal,
-                status: body.status,
             },
         });
 

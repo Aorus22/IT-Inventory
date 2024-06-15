@@ -20,18 +20,28 @@ model User {
   role     String
 }
 
+model JenisBarang {
+  id         Int    @id @default(autoincrement())
+  nama_jenis String
+  items      Item[]
+}
+
 model Item {
-  id        Int    @id @default(autoincrement())
-  nama      String
-  jenis     String
-  deskripsi String
-  stok      Int
-  gambar    String
+  id              Int             @id @default(autoincrement())
+  nama_item       String
+  deskripsi       String
+  stok            Int
+  harga           Int
+  gambar          String
+  JenisBarang     JenisBarang?    @relation(fields: [id_jenis_barang], references: [id])
+  id_jenis_barang Int?
+  transaksi       Transaksi[]
+  purchase_order  PurchaseOrder[]
 }
 
 model Project {
   id              Int      @id @default(autoincrement())
-  nama            String
+  nama_project    String
   deskripsi       String
   status          String
   tanggal_mulai   DateTime
@@ -39,17 +49,22 @@ model Project {
 }
 
 model Transaksi {
-  id        Int      @id @default(autoincrement())
-  nama      String
-  kuantitas Int
-  tanggal   DateTime
-  status    String
+  id              Int      @id @default(autoincrement())
+  jenis_transaksi String
+  nama_customer   String
+  Item            Item?    @relation(fields: [id_item], references: [id])
+  id_item         Int?
+  kuantitas       Int
+  tanggal         DateTime
+  status          String
 }
 
 model PurchaseOrder {
-  id        Int      @id @default(autoincrement())
-  nama      String
-  deskripsi String
-  tanggal   DateTime
-  status    String
+  id           Int      @id @default(autoincrement())
+  nama_pemesan String
+  Item         Item?    @relation(fields: [id_item], references: [id])
+  id_item      Int?
+  deskripsi    String
+  tanggal      DateTime
+  status       String
 }

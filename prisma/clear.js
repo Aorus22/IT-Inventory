@@ -7,6 +7,7 @@ async function clearTables() {
         await prisma.project.deleteMany();
         await prisma.transaksi.deleteMany();
         await prisma.purchaseOrder.deleteMany();
+        await prisma.jenisBarang.deleteMany();
         console.log('All tables have been cleared');
     } catch (error) {
         console.error('Error clearing tables:', error);

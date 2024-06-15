@@ -54,10 +54,11 @@ export async function PUT(request: Request) {
 
         const createdPO = await prisma.purchaseOrder.create({
             data: {
-                nama: body.nama,
+                nama_pemesan: body.nama_pemesan,
+                id_item: parseInt(body.id_item),
                 deskripsi: body.deskripsi,
                 tanggal: body.tanggal,
-                status: body.status
+                status: "pending"
             },
         });
 
@@ -82,10 +83,10 @@ export async function PATCH(request: Request) {
         const updatedPO = await prisma.purchaseOrder.update({
             where: { id: parseInt(id) },
             data: {
-                nama: body.nama,
+                nama_pemesan: body.nama_pemesan,
+                id_item: parseInt(body.id_item),
                 deskripsi: body.deskripsi,
                 tanggal: body.tanggal,
-                status: body.status
             },
         });
 

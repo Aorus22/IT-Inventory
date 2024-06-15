@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import {NextResponse} from "next/server";
+import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -10,17 +10,17 @@ export async function GET(request: Request) {
     let data;
 
     if (id) {
-        data = await prisma.project.findUnique({
+        data = await prisma.jenisBarang.findUnique({
             where: {
                 id: parseInt(id),
             },
         });
 
         if (!data) {
-            return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Item not found' }, { status: 404 });
         }
     } else {
-        data = await prisma.project.findMany();
+        data = await prisma.jenisBarang.findMany();
     }
 
     return NextResponse.json(data);
@@ -35,16 +35,16 @@ export async function DELETE(request: Request) {
     }
 
     try {
-        await prisma.project.delete({
+        await prisma.jenisBarang.delete({
             where: {
                 id: parseInt(deleteId),
             },
         });
 
-        return NextResponse.json({ message: 'Project deleted successfully' });
+        return NextResponse.json({ message: 'Item deleted successfully' });
     } catch (error) {
-        console.error('Failed to delete Project:', error);
-        return NextResponse.json({ error: 'Failed to delete Project' }, { status: 500 });
+        console.error('Failed to delete item:', error);
+        return NextResponse.json({ error: 'Failed to delete item' }, { status: 500 });
     }
 }
 
@@ -52,20 +52,16 @@ export async function PUT(request: Request) {
     try {
         const body = await request.json();
 
-        const createdItem = await prisma.project.create({
+        const createdItem = await prisma.jenisBarang.create({
             data: {
-                nama_project: body.nama_project,
-                deskripsi: body.deskripsi,
-                status: body.status,
-                tanggal_mulai: body.tanggal_mulai,
-                tanggal_selesai: body.tanggal_selesai
+                nama_jenis: body.nama_jenis
             },
         });
 
         return NextResponse.json(createdItem, { status: 201 });
     } catch (error) {
-        console.error('Failed to create Project:', error);
-        return NextResponse.json({ error: 'Failed to create Project' }, { status: 500 });
+        console.error('Failed to create Item:', error);
+        return NextResponse.json({ error: 'Failed to create Item' }, { status: 500 });
     }
 }
 
@@ -80,20 +76,16 @@ export async function PATCH(request: Request) {
     try {
         const body = await request.json();
 
-        const updatedProject = await prisma.project.update({
+        const updatedItem = await prisma.jenisBarang.update({
             where: { id: parseInt(id) },
             data: {
-                nama_project: body.nama_project,
-                deskripsi: body.deskripsi,
-                status: body.status,
-                tanggal_mulai: body.tanggal_mulai,
-                tanggal_selesai: body.tanggal_selesai
+                nama_jenis: body.nama_jenis
             },
         });
 
-        return NextResponse.json(updatedProject);
+        return NextResponse.json(updatedItem);
     } catch (error) {
-        console.error('Failed to update Project:', error);
-        return NextResponse.json({ error: 'Failed to update Project' }, { status: 500 });
+        console.error('Failed to update Item:', error);
+        return NextResponse.json({ error: 'Failed to update Item' }, { status: 500 });
     }
 }

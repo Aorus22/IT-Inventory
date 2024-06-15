@@ -1,30 +1,43 @@
 'use client';
-import React, { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from 'react';
+import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import axios from "axios";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
+import { formatHeader } from "@/components/Tabel";
+import {id} from "postcss-selector-parser";
 
 export type FormDataCustom = {
     [key: string]: any;
 };
+
+export interface DropdownItem {
+    id: string | number;
+    value: string;
+}
+
+export interface Dropdowns {
+    [key: string]: DropdownItem[];
+}
 
 interface DynamicFormProps {
     isNewForm: boolean;
     urlApi: string;
     data: FormDataCustom;
     setData: Dispatch<SetStateAction<any>>;
+    dropdowns?: Dropdowns;
+    ignore?: string[];
 }
 
-const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, urlApi }) => {
+const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, urlApi, dropdowns, ignore }) => {
     const router = useRouter();
     const [isEditMode, setIsEditMode] = useState(isNewForm);
-    const [initialData, setInitialData] = useState<FormDataCustom>(data);
+    const [initialData] = useState<FormDataCustom>(data);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         let parsedValue: any;
 
         if (e.target.type === "number") {
-            parsedValue = Number(value);
+            parsedValue = parseInt(value);
         } else if (e.target.type === "datetime-local") {
             parsedValue = new Date(value);
         } else {
@@ -33,7 +46,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, url
 
         setData((prevData: FormDataCustom) => ({ ...prevData, [name]: parsedValue }));
     };
-
 
     const toggleEditMode = () => {
         if (isEditMode) {
@@ -48,21 +60,21 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, url
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.put(`/api/${urlApi}`, data);
+            await axios.put(`/api/${urlApi}`, data);
             router.push(`/${urlApi}`);
-            alert("Add data successfull")
-        } catch (error){
-            console.error(error)
+            alert("Add data successful");
+        } catch (error) {
+            console.error(error);
         }
     };
 
     const handleUpdate = async () => {
         try {
-            const response = await axios.patch(`/api/${urlApi}?id=${data.id}`, data);
+            await axios.patch(`/api/${urlApi}?id=${data.id}`, data);
             router.push(`/${urlApi}`);
-            alert("Update data successfull")
-        } catch (error){
-            console.error(error)
+            alert("Update data successful");
+        } catch (error) {
+            console.error(error);
         }
         setIsEditMode(!isEditMode);
     };
@@ -106,19 +118,37 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ isNewForm, data, setData, url
                 {Object.keys(data).map((key) => (
                     <div key={key} className="mb-4">
                         <label
-                            className={`block text-gray-700 text-sm font-bold mb-2 ${isNewForm && key === 'id' ? 'hidden' : ''}`}
-                            htmlFor={key}>
-                            {key.charAt(0).toUpperCase() + key.slice(1)}
+                            className={`block text-gray-700 text-sm font-bold mb-2 ${isNewForm && (ignore?.includes(key) || key == "id") ? "hidden" : ""}`}
+                            htmlFor={key}
+                        >
+                            {formatHeader(key)}
                         </label>
-                        <input
-                            type={getInputType(key)}
-                            name={key}
-                            value={getInputType(key) === "datetime-local" ? (data[key].toISOString().slice(0, 16)) : (data[key])}
-                            onChange={handleChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            hidden={isNewForm && key === 'id'}
-                            disabled={!isEditMode || key === 'id'}
-                        />
+                        {dropdowns && dropdowns[key] ? (
+                            <select
+                                name={key}
+                                value={data[key] !== 0 ? (data[key]) : ""}
+                                onChange={handleChange}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                disabled={!isEditMode}
+                            >
+                                <option value="" disabled selected hidden>Pilih...</option>
+                                {dropdowns[key].map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        {item.id === item.value ? (item.id) : (`${item.id} - ${item.value}`)}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <input
+                                type={getInputType(key)}
+                                name={key}
+                                value={getInputType(key) === "datetime-local" ? (data[key].toISOString().slice(0, 16)) : (data[key])}
+                                onChange={handleChange}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                hidden={isNewForm && (ignore?.includes(key) || key == "id")}
+                                disabled={!isEditMode || ignore?.includes(key) || key == "id"}
+                            />
+                        )}
                     </div>
                 ))}
 

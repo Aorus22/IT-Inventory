@@ -45,6 +45,11 @@ const Sidebar = () => {
             svg: '/icon/inventory.svg',
         },
         {
+            href: '/JenisBarang',
+            label: 'Jenis Barang',
+            svg: '/icon/inventory.svg',
+        },
+        {
             href: '/Project',
             label: 'Project',
             svg: '/icon/project.svg',

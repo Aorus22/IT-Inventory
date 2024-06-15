@@ -20,7 +20,16 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Item not found' }, { status: 404 });
         }
     } else {
-        data = await prisma.item.findMany();
+        data = await prisma.item.findMany({
+            include: {
+                JenisBarang: true,
+            },
+        });
+
+        data = data.map(({ id_jenis_barang, JenisBarang, ...rest }) => ({
+            ...rest,
+            nama_jenis: JenisBarang?.nama_jenis,
+        }));
     }
 
     return NextResponse.json(data);
@@ -54,10 +63,11 @@ export async function PUT(request: Request) {
 
         const createdItem = await prisma.item.create({
             data: {
-                nama: body.nama,
-                jenis: body.jenis,
+                nama_item: body.nama_item,
+                id_jenis_barang: parseInt(body.id_jenis_barang),
                 deskripsi: body.deskripsi,
                 stok: body.stok,
+                harga: body.harga,
                 gambar: body.gambar
             },
         });
@@ -83,10 +93,11 @@ export async function PATCH(request: Request) {
         const updatedItem = await prisma.item.update({
             where: { id: parseInt(id) },
             data: {
-                nama: body.nama,
-                jenis: body.jenis,
+                nama_item: body.nama_item,
+                id_jenis_barang: body.jenisBarangId,
                 deskripsi: body.deskripsi,
                 stok: body.stok,
+                harga: body.harga,
                 gambar: body.gambar
             },
         });
