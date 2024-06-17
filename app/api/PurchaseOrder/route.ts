@@ -56,6 +56,7 @@ export async function PUT(request: Request) {
             data: {
                 nama_pemesan: body.nama_pemesan,
                 id_item: parseInt(body.id_item),
+                kuantitas: body.kuantitas,
                 deskripsi: body.deskripsi,
                 tanggal: body.tanggal,
                 status: "pending"

@@ -64,6 +64,7 @@ model PurchaseOrder {
   nama_pemesan String
   Item         Item?    @relation(fields: [id_item], references: [id])
   id_item      Int?
+  kuantitas    Int
   deskripsi    String
   tanggal      DateTime
   status       String

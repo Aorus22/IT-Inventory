@@ -46,7 +46,7 @@ async function main() {
     }
 
     // Generate data for Transaksi table
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 100; i++) {
         const randomItem = itemData[Math.floor(Math.random() * itemData.length)];
         await prisma.transaksi.create({
             data: {
@@ -67,6 +67,7 @@ async function main() {
             data: {
                 nama_pemesan: faker.name.findName(),
                 id_item: randomItem.id,
+                kuantitas: faker.datatype.number({ min: 1, max: 100 }),
                 deskripsi: faker.lorem.sentence(),
                 tanggal: faker.date.recent(),
                 status: faker.random.arrayElement(['pending', 'approved', 'rejected']),

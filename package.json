@@ -17,6 +17,7 @@
     "axios": "^1.7.2",
     "cookie-session": "^2.1.0",
     "cookies-next": "^4.2.1",
+    "exceljs": "^4.4.0",
     "faker": "^5.5.3",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
