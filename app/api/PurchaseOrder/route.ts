@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 export async function GET(request: Request) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
+    const status = url.searchParams.get('status');
 
     let data;
 
@@ -19,8 +20,34 @@ export async function GET(request: Request) {
         if (!data) {
             return NextResponse.json({ error: 'Purchase Order not found' }, { status: 404 });
         }
+    } else if (status) {
+        data = await prisma.purchaseOrder.findMany({
+            include: {
+                Item: true
+            },
+            where: {
+                status: status
+            }
+        });
+
+        data = data.map(({ id_item, id, nama_pemesan,  Item, ...rest }) => ({
+            id: id,
+            nama_pemesan: nama_pemesan,
+            nama_item: Item?.nama_item,
+            ...rest,
+        }));
     } else {
-        data = await prisma.purchaseOrder.findMany();
+        data = await prisma.purchaseOrder.findMany({
+            include: {
+                Item: true
+            },
+        });
+        data = data.map(({ id_item, id, nama_pemesan,  Item, ...rest }) => ({
+            id: id,
+            nama_pemesan: nama_pemesan,
+            nama_item: Item?.nama_item,
+            ...rest,
+        }));
     }
 
     return NextResponse.json(data);
@@ -96,4 +123,31 @@ export async function PATCH(request: Request) {
         console.error('Failed to update Purchase Order:', error);
         return NextResponse.json({ error: 'Failed to update Purchase Order' }, { status: 500 });
     }
+}
+
+export async function POST(request: Request) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+    const status = url.searchParams.get('status');
+
+    if (!id) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+    }
+
+    if (status){
+        try {
+            const updatedPO = await prisma.purchaseOrder.update({
+                where: { id: parseInt(id) },
+                data: {
+                    status: status
+                },
+            });
+
+            return NextResponse.json(updatedPO);
+        } catch (error) {
+            console.error('Failed to update Purchase Order:', error);
+            return NextResponse.json({ error: 'Failed to update Purchase Order' }, { status: 500 });
+        }
+    }
+
 }

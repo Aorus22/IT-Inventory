@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import ExcelJS from 'exceljs';
+import {formatHeader, formatDate} from "@/util/formatString";
 
 interface TableProps {
     data: Array<{ [key: string]: any }>;
@@ -10,31 +12,11 @@ interface TableProps {
     fetchData: () => void;
 }
 
-export const formatHeader = (key: string) => {
-    return key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-};
-
-const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('id-ID', options);
-};
-
 const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
     const router = useRouter();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(() => {
-        return parseInt(localStorage.getItem('itemsPerPage') || '10');
-    });
-
-    useEffect(() => {
-        localStorage.setItem('itemsPerPage', itemsPerPage.toString());
-    }, [itemsPerPage]);
 
     const [showModalDelete, setShowModalDelete] = useState(false);
     const [modalItemId, setModalItemId] = useState('');
-
-    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' | '' }>({ key: '', direction: '' });
 
     const handleDelete = async (id: string) => {
         setModalItemId(id);
@@ -61,10 +43,22 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
         router.push(`/${apiUrl}/${id}`);
     };
 
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        return parseInt(localStorage.getItem('itemsPerPage') || '10');
+    });
+
+    useEffect(() => {
+        localStorage.setItem('itemsPerPage', itemsPerPage.toString());
+    }, [itemsPerPage]);
+
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
         setCurrentPage(1);
     };
+
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' | '' }>({ key: '', direction: '' });
 
     const handleSort = (key: string) => {
         let direction: 'ascending' | 'descending' | '' = 'ascending';
@@ -115,37 +109,86 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
 
     const exportToPdf = () => {
         const doc = new jsPDF('p', 'pt', 'a4');
-        const pdfTable = document.querySelector('#pdf-table');
+        const pdfTable = document.querySelector('#pdf-table') as HTMLTableElement;
 
         if (!pdfTable) {
             console.error('Element with ID "pdf-table" not found.');
             return;
         }
 
-        const actionColumns = pdfTable.querySelectorAll('th:last-child, td:last-child');
+        const actionColumns = pdfTable.querySelectorAll('th:last-child, td:last-child') as NodeListOf<HTMLElement>;
         actionColumns.forEach(col => {
-            (col as HTMLElement).style.display = 'none';
+            col.style.display = 'none';
         });
 
-        html2canvas(pdfTable as HTMLElement, {
-            scale: 1
-        }).then(canvas => {
+        const totalPagesExpander = new Promise<void>(resolve => {
+            const pdfWidth = doc.internal.pageSize.getWidth();
+            const pdfHeight = doc.internal.pageSize.getHeight();
+            html2canvas(pdfTable, {
+                scale: 1
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+                let position = 0;
 
+                // Calculate total pages
+                const totalRows = pdfTable.rows.length;
+                const pageHeight = pdfHeight - 40; // accounting for margins
+
+                const renderPage = () => {
+                    doc.addImage(imgData, 'PNG', 40, 40 + position, pdfWidth - 80, imgHeight);
+                    position -= pageHeight;
+
+                    // Check if there are remaining rows to render
+                    if (position <= -imgHeight) {
+                        doc.addPage();
+                        resolve();
+                    } else {
+                        doc.addPage();
+                        renderPage();
+                    }
+                };
+
+                renderPage();
+            });
+        });
+
+        totalPagesExpander.then(() => {
             actionColumns.forEach(col => {
-                (col as HTMLElement).style.display = '';
+                col.style.display = '';
             });
 
-            const imgData = canvas.toDataURL('image/png');
-            const pdfWidth = doc.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-            doc.addImage(imgData, 'PNG', 40, 40, pdfWidth - 80, pdfHeight);
             doc.save('table.pdf');
         }).catch(error => {
             console.error('Failed to generate PDF:', error);
             actionColumns.forEach(col => {
-                (col as HTMLElement).style.display = '';
+                col.style.display = '';
             });
+        });
+    };
+
+    const exportToExcel = () => {
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet('Sheet1');
+
+        const headers = Object.keys(currentItems[0]);
+        sheet.addRow(headers);
+
+        currentItems.forEach(item => {
+            const row = Object.values(item);
+            sheet.addRow(row);
+        });
+
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const filename = 'table.xlsx';
+            const href = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = href;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(href);
         });
     };
 
@@ -200,12 +243,20 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
                     </svg>
                     <span>Tambah</span>
                 </button>
-                <button
-                    className="bg-green-200 hover:bg-green-400 text-green-800 font-bold py-2 px-4 rounded"
-                    onClick={exportToPdf}
-                >
-                    Export to PDF
-                </button>
+                <div>
+                    <button
+                        className="bg-red-200 hover:bg-red-400 text-red-800 font-bold py-2 px-4 rounded"
+                        onClick={exportToPdf}
+                    >
+                        Export to PDF
+                    </button>
+                    <button
+                        className="bg-green-200 hover:bg-green-400 text-green-800 font-bold py-2 px-4 rounded ml-2"
+                        onClick={exportToExcel}
+                    >
+                        Export to Excel
+                    </button>
+                </div>
                 <div className="relative">
                     <input
                         type="text"

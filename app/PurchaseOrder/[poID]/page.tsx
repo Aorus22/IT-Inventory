@@ -6,8 +6,8 @@ import axios from "axios";
 import {Item, PurchaseOrder} from "@prisma/client";
 import LoadingBar from "@/components/LoadingBar";
 import PageTitle from "@/components/PageTitle";
-import excelPO, {saveFile} from "@/util/excel";
-import excel from "@/util/excel";
+import excelPO, {saveFile} from "@/util/excelPO";
+import excel from "@/util/excelPO";
 
 const Page = () => {
     const param = useParams()
@@ -110,8 +110,8 @@ const Page = () => {
             <PageTitle title={"Detail Purchase Order"} />
             <DynamicForm data={data} setData={setData} isNewForm={false} urlApi="PurchaseOrder" dropdowns={dropdowns} ignore={ignore}/>
             {data.status === "approved" && (
-                <div className="w-full my-4 flex items-center justify-center">
-                    <button className="bg-green-600 text-white px-8 py-2 rounded"
+                <div className="rounded-xl bg-white py-5 w-full my-4 flex items-center justify-center">
+                    <button className="text-xl bg-green-200 hover:bg-green-400 text-green-800 font-bold py-2 px-4 rounded"
                             onClick={handleGenerateForm}
                     >
                         Generate Form

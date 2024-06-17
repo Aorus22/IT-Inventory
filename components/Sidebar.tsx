@@ -66,9 +66,19 @@ const Sidebar = () => {
             svg: '/icon/transaksi.svg',
         },
         {
+            href: '/KonfirmasiTransaksi',
+            label: 'Konfirmasi Transaksi',
+            svg: '/icon/transaksi.svg',
+        },
+        {
             href: '/PurchaseOrder',
             label: 'Purchase Order',
             svg: '/icon/purchaseorder.svg',
+        },
+        {
+            href: '/KonfirmasiPurchaseOrder',
+            label: 'Konfirmasi Purchase Order',
+            svg: '/icon/project.svg',
         },
     ];
 
@@ -105,7 +115,7 @@ const Sidebar = () => {
                 {menuItems.map((item, index) => (
                     <li
                         key={index}
-                        className={`font-bold text-gray-300 text-md flex items-center cursor-pointer pl-6 py-3 hover:bg-light-white rounded-r-xl mt-2 ${activePage === item.href && 'bg-white text-blue-900'}`}
+                        className={`font-bold text-md flex items-center cursor-pointer pl-6 py-3 hover:bg-light-white rounded-r-xl text-blue-700 mt-2 ${activePage === item.href ? ('bg-white text-blue-800') : ('text-gray-200')}`}
                     >
                         <Link href={item.href}>
                             <div className="flex items-center">

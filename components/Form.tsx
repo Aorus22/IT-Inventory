@@ -2,8 +2,8 @@
 import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { formatHeader } from "@/components/Tabel";
 import {id} from "postcss-selector-parser";
+import {formatHeader} from "@/util/formatString";
 
 export type FormDataCustom = {
     [key: string]: any;

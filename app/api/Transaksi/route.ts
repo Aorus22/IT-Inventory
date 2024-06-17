@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 export async function GET(request: Request) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
+    const status = url.searchParams.get('status');
 
     let data;
 
@@ -19,13 +20,29 @@ export async function GET(request: Request) {
         if (!data) {
             return NextResponse.json({ error: 'Transaksi not found' }, { status: 404 });
         }
+    } else if (status) {
+        data = await prisma.transaksi.findMany({
+            include: {
+                Item: true
+            },
+            where: {
+                status: status
+            }
+        });
+
+        data = data.map(({ id_item, id, jenis_transaksi, nama_customer,  Item, ...rest }) => ({
+            id: id,
+            jenis_transaksi: jenis_transaksi,
+            nama_customer: nama_customer,
+            nama_item: Item?.nama_item,
+            ...rest,
+        }));
     } else {
         data = await prisma.transaksi.findMany({
             include: {
                 Item: true
-            }
+            },
         });
-
         data = data.map(({ id_item, id, jenis_transaksi, nama_customer,  Item, ...rest }) => ({
             id: id,
             jenis_transaksi: jenis_transaksi,
@@ -109,4 +126,31 @@ export async function PATCH(request: Request) {
         console.error('Failed to update Transaksi:', error);
         return NextResponse.json({ error: 'Failed to update Transaksi Order' }, { status: 500 });
     }
+}
+
+export async function POST(request: Request) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+    const status = url.searchParams.get('status');
+
+    if (!id) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+    }
+
+    if (status){
+        try {
+            const updatedTransaksi = await prisma.transaksi.update({
+                where: { id: parseInt(id) },
+                data: {
+                    status: status
+                },
+            });
+
+            return NextResponse.json(updatedTransaksi);
+        } catch (error) {
+            console.error('Failed to update Transaksi:', error);
+            return NextResponse.json({ error: 'Failed to update Transaksi Order' }, { status: 500 });
+        }
+    }
+
 }
