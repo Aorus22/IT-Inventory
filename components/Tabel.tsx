@@ -25,11 +25,15 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
 
     const confirmDelete = async () => {
         try {
-            await axios.delete(`/api/${apiUrl}?id=${modalItemId}`);
-            fetchData();
-            alert('Data deleted successfully');
+            const response = await axios.delete(`/api/${apiUrl}?id=${modalItemId}`);
+            if (response.status === 200) {
+                alert('Data deleted successfully');
+                fetchData();
+            } else {
+                alert('Failed to delete data');
+            }
         } catch (error) {
-            console.error('Failed to delete data:', error);
+            alert('Failed to delete data');
         } finally {
             setShowModalDelete(false);
         }

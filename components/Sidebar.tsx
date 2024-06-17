@@ -16,7 +16,7 @@ const Sidebar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User>({
         role: "",
-        username: ""
+        username: "",
     });
 
     const [activePage, setActivePage] = useState('/');
@@ -137,8 +137,8 @@ const Sidebar = () => {
                     <div className="flex items-center gap-x-4 text-white">
                         <img src={'/placeholder_pp.jpg'} alt="Profile" className="w-8 h-8 rounded-full"/>
                         <div>
-                            <p>{user.username}</p>
-                            <p>{user.role}</p>
+                            <p>{user?.username}</p>
+                            <p>{user?.role}</p>
                         </div>
                         <button className="text-white" onClick={handleLogout}>Logout</button>
                     </div>
