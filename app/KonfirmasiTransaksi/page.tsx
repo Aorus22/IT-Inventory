@@ -31,7 +31,7 @@ const TransactionPage = () => {
     return (
         <>
             <section className='max-container px-4'>
-                <PageTitle title={"Transaksi"} />
+                <PageTitle title={"Konfirmasi Transaksi"} />
                 <div className="grid grid-cols-3 gap-3 mt-4">
                     {daftarTransaksi.map((item, index) => (
                         <BoxKonfirmasi key={index} data={item} fetchData={fetchData} apiUrl={"Transaksi"}/>

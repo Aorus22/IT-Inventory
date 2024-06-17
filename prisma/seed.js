@@ -54,7 +54,7 @@ async function main() {
                 nama_customer: faker.name.findName(),
                 id_item: randomItem.id,
                 kuantitas: faker.datatype.number({ min: 1, max: 100 }),
-                tanggal: faker.date.recent(),
+                tanggal: faker.date.between('2024-01-01', '2024-05-31'),
                 status: faker.random.arrayElement(['pending', 'approved', 'rejected']),
             },
         });
@@ -69,7 +69,7 @@ async function main() {
                 id_item: randomItem.id,
                 kuantitas: faker.datatype.number({ min: 1, max: 100 }),
                 deskripsi: faker.lorem.sentence(),
-                tanggal: faker.date.recent(),
+                tanggal: faker.date.between('2024-01-01', '2024-05-31'),
                 status: faker.random.arrayElement(['pending', 'approved', 'rejected']),
             },
         });

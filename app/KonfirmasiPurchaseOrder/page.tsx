@@ -32,7 +32,7 @@ const PurchaseOrderPage = () => {
     return (
         <>
             <section className='max-container px-4'>
-                <PageTitle title={"Purchase Order"}/>
+                <PageTitle title={"Konfirmasi Purchase Order"}/>
                 <div className="grid grid-cols-3 gap-3 mt-4">
                     {daftarPO.map((item, index) => (
                         <BoxKonfirmasi key={index} data={item} fetchData={fetchData} apiUrl={"PurchaseOrder"}/>
