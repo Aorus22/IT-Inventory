@@ -137,8 +137,40 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
     }
 
-    if (status){
+    if (status) {
         try {
+            const transaksi = await prisma.transaksi.findUnique({
+                where: { id: parseInt(id) },
+                include: { Item: true }
+            });
+
+            if (!transaksi) {
+                return NextResponse.json({ error: 'Transaksi not found' }, { status: 404 });
+            }
+
+            if (!transaksi.Item) {
+                return NextResponse.json({ error: 'Item not found for the transaksi' }, { status: 404 });
+            }
+
+            const item = transaksi.Item;
+
+            if (status === 'approved') {
+                if (transaksi.jenis_transaksi === 'masuk') {
+                    await prisma.item.update({
+                        where: { id: item.id },
+                        data: { stok: item.stok + transaksi.kuantitas }
+                    });
+                } else if (transaksi.jenis_transaksi === 'keluar') {
+                    if (item.stok < transaksi.kuantitas) {
+                        return NextResponse.json({ error: 'Stok tidak cukup' }, { status: 400 });
+                    }
+                    await prisma.item.update({
+                        where: { id: item.id },
+                        data: { stok: item.stok - transaksi.kuantitas }
+                    });
+                }
+            }
+
             const updatedTransaksi = await prisma.transaksi.update({
                 where: { id: parseInt(id) },
                 data: {
@@ -152,5 +184,4 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Failed to update Transaksi Order' }, { status: 500 });
         }
     }
-
 }

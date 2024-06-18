@@ -32,8 +32,22 @@ const Table: React.FC<TableProps> = ({ data, apiUrl, fetchData }) => {
             } else {
                 alert('Failed to delete data');
             }
-        } catch (error) {
-            alert('Failed to delete data');
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        alert('Unauthorized operation');
+                    } else if (error.response.data && error.response.data.error) {
+                        alert(`Failed to delete data: ${error.response.data.error}`);
+                    } else {
+                        alert('Failed to delete data');
+                    }
+                } else {
+                    alert('Failed to delete data');
+                }
+            } else {
+                alert('An unexpected error occurred');
+            }
         } finally {
             setShowModalDelete(false);
         }

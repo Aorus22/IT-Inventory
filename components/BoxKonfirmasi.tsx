@@ -31,10 +31,18 @@ const BoxKonfirmasi: React.FC<BoxProps> = ({ data, apiUrl, fetchData }) => {
             } else if (actionType === "reject") {
                 await axios.post(`/api/${apiUrl}?id=${id}&status=rejected`);
             }
-            setShowModalConfirm(false); // Tutup modal setelah tindakan berhasil
-            fetchData(); // Ambil data baru setelah berhasil
-        } catch (error) {
-            console.error(error);
+            setShowModalConfirm(false);
+            fetchData();
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                if (error.response && error.response.status === 400) {
+                    alert(error.response.data.error)
+                } else {
+                    console.error(error);
+                }
+            } else {
+                console.error('Unexpected error', error);
+            }
         }
     };
 
